@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ef-practie", "ef-practie.csproj", "{7FA8BABB-676C-4D41-9485-AC51F148DE8F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "entity-framework-practie-app", "entity-framework-practie-app.csproj", "{7FA8BABB-676C-4D41-9485-AC51F148DE8F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
