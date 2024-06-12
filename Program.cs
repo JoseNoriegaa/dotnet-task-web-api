@@ -22,7 +22,7 @@ app.MapGet("/api/tasks", static ([FromServices] ApplicationDBContext ctx) =>
 
 app.MapGet("/api/tasks/{id:guid}", static ([FromServices] ApplicationDBContext ctx, Guid id) =>
 {
-    var item = ctx.Tasks.Where(p => p.Id == id).Include(p => p.Category).FirstOrDefault(p => p.Id == id);
+    var item = ctx.Tasks.Find(id);
 
     if (item == null)
     {
@@ -63,7 +63,7 @@ app.MapPost("/api/tasks", ([FromServices] ApplicationDBContext ctx, [FromBody] T
 });
 
 app.MapPut("/api/tasks/{id:guid}", (Guid id, [FromServices] ApplicationDBContext ctx, [FromBody] TaskDTO body) => {
-    var item = ctx.Tasks.Where(p => p.Id == id).FirstOrDefault(p => p.Id == id);
+    var item = ctx.Tasks.Find(id);
 
     if (item == null)
     {
@@ -93,7 +93,7 @@ app.MapPut("/api/tasks/{id:guid}", (Guid id, [FromServices] ApplicationDBContext
 });
 
 app.MapDelete("/api/tasks/{id:guid}", (Guid id, [FromServices] ApplicationDBContext ctx) => {
-    var item = ctx.Tasks.Where(p => p.Id == id).FirstOrDefault(p => p.Id == id);
+    var item = ctx.Tasks.Find(id);
 
     if (item == null)
     {
@@ -116,7 +116,7 @@ app.MapGet("/api/categories", static ([FromServices] ApplicationDBContext ctx) =
 });
 
 app.MapGet("/api/categories/{id:guid}", static ([FromServices] ApplicationDBContext ctx, Guid id) => {
-    var item = ctx.Categories.Where(p => p.Id == id).FirstOrDefault(p => p.Id == id);
+    var item = ctx.Categories.Find(id);
 
     if (item == null)
     {
