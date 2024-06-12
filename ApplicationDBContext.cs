@@ -2,11 +2,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Models = EntityFrameworkPracticeApp.Models;
 
-internal class ApplicationDBContext: DbContext {
-    public DbSet<Models.Category> Categories {get; set; }
+internal class ApplicationDBContext : DbContext
+{
+    public DbSet<Models.Category> Categories { get; set; }
     public DbSet<Models.Task> Tasks { get; set; }
 
-    public ApplicationDBContext(DbContextOptions<ApplicationDBContext> options): base(options) {}
+    public ApplicationDBContext(DbContextOptions<ApplicationDBContext> options) : base(options) { }
 
     private static void ApplyCommonProperties<TEntity>(EntityTypeBuilder<TEntity> model) where TEntity : Models.BaseModel
     {
@@ -28,8 +29,28 @@ internal class ApplicationDBContext: DbContext {
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        var categories = new List<Models.Category>()
+        {
+            new()
+            {
+                Id = Guid.Parse("e9d2de54-d048-42fd-8715-251875766097"),
+                Name = "Actividades Pendientes",
+                Weight = 20,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+            },
+            new()
+            {
+                Id = Guid.Parse("ea5fdb05-f70e-47e0-91ee-292f1baf5eae"),
+                Name = "Actividades Personales",
+                Weight = 50,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+            },
+        };
 
-        modelBuilder.Entity<Models.Category>(static model => {
+        modelBuilder.Entity<Models.Category>(model =>
+        {
             model.ToTable("category");
 
             ApplyCommonProperties(model);
@@ -47,9 +68,36 @@ internal class ApplicationDBContext: DbContext {
             model
                 .Property(static p => p.Weight)
                 .HasColumnName("weight");
+
+            model.HasData(categories);
         });
 
-        modelBuilder.Entity<Models.Task>(static model => {
+        var tasks = new List<Models.Task>()
+        {
+            new()
+            {
+                Id = Guid.Parse("3c3fd5ab-2202-4dea-82ea-1ef1dc7c9b20"),
+                Name = "Pago de servicios públicos",
+                Description = "",
+                CategoryId = categories[0].Id,
+                Priority = Models.Priority.MEDIUM,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+            },
+            new()
+            {
+                Id = Guid.Parse("94cbd857-fd05-496a-b025-673815fdf7b8"),
+                Name = "Terminar película en Netflix",
+                Description = "",
+                CategoryId = categories[1].Id,
+                Priority = Models.Priority.LOW,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+            },
+        };
+
+        modelBuilder.Entity<Models.Task>(model =>
+        {
             model.ToTable("task");
 
             ApplyCommonProperties(model);
@@ -62,7 +110,8 @@ internal class ApplicationDBContext: DbContext {
 
             model
                 .Property(static p => p.Description)
-                .HasColumnName("description");
+                .HasColumnName("description")
+                .IsRequired(false);
 
             model
                 .Property(static p => p.Priority)
@@ -78,6 +127,8 @@ internal class ApplicationDBContext: DbContext {
                 .HasForeignKey(static p => p.CategoryId);
 
             model.Ignore(static p => p.ShortDescription);
+
+            model.HasData(tasks);
         });
     }
 }
