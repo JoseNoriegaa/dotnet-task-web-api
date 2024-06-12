@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace EntityFrameworkPracticeApp.Models;
 
 internal class Category : BaseModel
@@ -6,7 +8,8 @@ internal class Category : BaseModel
 
     public string Description { get; set; } = "";
 
-    public virtual ICollection<Task> Tasks { get; set; } = [];
-
     public int Weight { get; set; }
+
+    [JsonIgnore]
+    public virtual ICollection<Task> Tasks { get; set; } = [];
 }
