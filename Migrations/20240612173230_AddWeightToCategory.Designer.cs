@@ -11,8 +11,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ef_practie.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20240612172456_InitialCreation")]
-    partial class InitialCreation
+    [Migration("20240612173230_AddWeightToCategory")]
+    partial class AddWeightToCategory
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -41,6 +41,10 @@ namespace ef_practie.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("character varying(150)")
                         .HasColumnName("name");
+
+                    b.Property<int>("Weight")
+                        .HasColumnType("integer")
+                        .HasColumnName("weight");
 
                     b.HasKey("Id");
 

@@ -1,22 +1,38 @@
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Models = EntityFrameworkPracticeApp.Models;
 
-internal class TaskDBContext: DbContext {
-    public DbSet<EntityFrameworkPracticeApp.Models.Category> Categories {get; set; }
-    public DbSet<EntityFrameworkPracticeApp.Models.Task> Tasks { get; set; }
+internal class ApplicationDBContext: DbContext {
+    public DbSet<Models.Category> Categories {get; set; }
+    public DbSet<Models.Task> Tasks { get; set; }
 
-    public TaskDBContext(DbContextOptions<TaskDBContext> options): base(options) {}
+    public ApplicationDBContext(DbContextOptions<ApplicationDBContext> options): base(options) {}
+
+    private static void ApplyCommonProperties<TEntity>(EntityTypeBuilder<TEntity> model) where TEntity : Models.BaseModel
+    {
+        model.HasKey(p => p.Id);
+
+        model
+            .Property(static p => p.Id)
+            .HasColumnName("id");
+
+        model
+            .Property(static p => p.CreatedAt)
+            .HasColumnName("created_at")
+            .IsRequired();
+
+        model
+            .Property(static p => p.UpdatedAt)
+            .HasColumnName("updated_at");
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+
         modelBuilder.Entity<Models.Category>(static model => {
             model.ToTable("category");
-            model.HasKey(static p => p.Id);
 
-            model
-                .Property(static p => p.Id)
-                .HasColumnName("id");
+            ApplyCommonProperties(model);
 
             model
                 .Property(static p => p.Name)
@@ -27,14 +43,16 @@ internal class TaskDBContext: DbContext {
             model
                 .Property(static p => p.Description)
                 .HasColumnName("description");
+
+            model
+                .Property(static p => p.Weight)
+                .HasColumnName("weight");
         });
 
         modelBuilder.Entity<Models.Task>(static model => {
             model.ToTable("task");
 
-            model
-                .Property(static p => p.Id)
-                .HasColumnName("id");
+            ApplyCommonProperties(model);
 
             model
                 .Property(static p => p.Name)
@@ -58,10 +76,6 @@ internal class TaskDBContext: DbContext {
                 .HasOne(static p => p.Category)
                 .WithMany(static p => p.Tasks)
                 .HasForeignKey(static p => p.CategoryId);
-
-            model
-                .Property(static p => p.CreatedAt)
-                .HasColumnName("created_at");
 
             model.Ignore(static p => p.ShortDescription);
         });

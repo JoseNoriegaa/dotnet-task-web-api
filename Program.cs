@@ -5,7 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder
     .Services
-    .AddNpgsql<TaskDBContext>(builder
+    .AddNpgsql<ApplicationDBContext>(builder
         .Configuration
         .GetConnectionString("TasksDatabase"));
 
@@ -13,7 +13,7 @@ var app = builder.Build();
 
 app.MapGet("/", () => "Hello World!");
 
-app.MapGet("/db-connection", static async ([FromServices] TaskDBContext dbCtx) =>
+app.MapGet("/db-connection", static async ([FromServices] ApplicationDBContext dbCtx) =>
 {
     var result = await dbCtx.Database.EnsureCreatedAsync();
 
