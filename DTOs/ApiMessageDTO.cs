@@ -1,4 +1,4 @@
-namespace EntityFrameworkPracticeApp.DTOs;
+namespace TasksWebApi.DTOs;
 
 public struct ApiMessageDto
 {

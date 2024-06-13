@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace EntityFrameworkPracticeApp.Controllers;
+namespace TasksWebApi.Controllers;
 
 [ApiController]
 [Route("api/tasks")]

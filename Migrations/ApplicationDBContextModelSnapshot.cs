@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace EntityFrameworkPracticeApp.Migrations
+namespace TasksWebApi.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
     partial class ApplicationDBContextModelSnapshot : ModelSnapshot
@@ -21,7 +21,7 @@ namespace EntityFrameworkPracticeApp.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("EntityFrameworkPracticeApp.Models.Category", b =>
+            modelBuilder.Entity("TasksWebApi.Models.Category", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -76,7 +76,7 @@ namespace EntityFrameworkPracticeApp.Migrations
                         });
                 });
 
-            modelBuilder.Entity("EntityFrameworkPracticeApp.Models.Task", b =>
+            modelBuilder.Entity("TasksWebApi.Models.Task", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -136,9 +136,9 @@ namespace EntityFrameworkPracticeApp.Migrations
                         });
                 });
 
-            modelBuilder.Entity("EntityFrameworkPracticeApp.Models.Task", b =>
+            modelBuilder.Entity("TasksWebApi.Models.Task", b =>
                 {
-                    b.HasOne("EntityFrameworkPracticeApp.Models.Category", "Category")
+                    b.HasOne("TasksWebApi.Models.Category", "Category")
                         .WithMany("Tasks")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -147,7 +147,7 @@ namespace EntityFrameworkPracticeApp.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("EntityFrameworkPracticeApp.Models.Category", b =>
+            modelBuilder.Entity("TasksWebApi.Models.Category", b =>
                 {
                     b.Navigation("Tasks");
                 });

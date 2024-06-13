@@ -1,4 +1,4 @@
-namespace EntityFrameworkPracticeApp.Models;
+namespace TasksWebApi.Models;
 
 public abstract class BaseModel
 {

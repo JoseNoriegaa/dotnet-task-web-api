@@ -1,4 +1,4 @@
-namespace EntityFrameworkPracticeApp.Services;
+namespace TasksWebApi.Services;
 
 public class CategoryService(ApplicationDBContext _dbContext, ILogger<CategoryService> _logger) : ICategoryService
 {

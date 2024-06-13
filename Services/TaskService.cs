@@ -1,4 +1,4 @@
-namespace EntityFrameworkPracticeApp.Services;
+namespace TasksWebApi.Services;
 
 public class TaskService(ApplicationDBContext _dbContext, ILogger<TaskService> _logger) : ITaskService
 {

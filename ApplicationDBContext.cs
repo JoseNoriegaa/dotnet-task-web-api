@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Models = EntityFrameworkPracticeApp.Models;
 
 public class ApplicationDBContext : DbContext
 {

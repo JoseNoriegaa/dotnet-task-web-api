@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace EntityFrameworkPracticeApp.Models;
+namespace TasksWebApi.Models;
 
 public class Category : BaseModel
 {
