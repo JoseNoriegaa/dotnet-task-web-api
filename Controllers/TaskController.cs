@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace EntityFrameworkPracticeApp.Controllers;
 
 [ApiController]
 [Route("api/tasks")]
+[Produces("application/json")]
+[Consumes("application/json")]
 public class TaskController(
     ILogger<TaskController> _logger,
     Services.ITaskService _taskService,
@@ -11,6 +14,8 @@ public class TaskController(
 {
     // GET: api/tasks
     [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<Models.Task>), 200)]
+    [SwaggerOperation(Description = "Returns all the available tasks.")]
     public IActionResult List()
     {
         return Ok(_taskService.GetAllTasks());
@@ -18,6 +23,8 @@ public class TaskController(
 
     // GET: api/tasks/{id}
     [HttpGet("{id:guid}")]
+    [ProducesResponseType(typeof(Models.Task), 200)]
+    [SwaggerOperation(Description = "Returns the information of a task by its ID.")]
     public IActionResult Retrieve(Guid id)
     {
         var item = _taskService.GetTaskById(id);
@@ -31,6 +38,8 @@ public class TaskController(
 
     // POST: api/tasks
     [HttpPost]
+    [ProducesResponseType(typeof(Models.Task), 200)]
+    [SwaggerOperation(Description = "Creates a new task.")]
     public IActionResult Create([FromBody] DTOs.TaskDTO body)
     {
         bool categoryExists = _categoryService.Exists(body.CategoryId);
@@ -46,6 +55,8 @@ public class TaskController(
 
     // PUT: api/tasks/:id
     [HttpPut("{id:guid}")]
+    [ProducesResponseType(typeof(Models.Task), 200)]
+    [SwaggerOperation(Description = "Updates a task by providing its ID and the data to update")]
     public IActionResult Update(Guid id, [FromBody] DTOs.TaskDTO body)
     {
         var item = _taskService.GetTaskById(id);
@@ -67,6 +78,8 @@ public class TaskController(
 
     // DELETE: api/tasks/:id
     [HttpDelete("{id:guid}")]
+    [ProducesResponseType(typeof(Models.Task), 200)]
+    [SwaggerOperation(Description = "Deletes a task by its ID")]
     public IActionResult Delete(Guid id)
     {
         var item = _taskService.GetTaskById(id);
@@ -83,7 +96,7 @@ public class TaskController(
     private NotFoundObjectResult TaskNotFoundResponse(Guid id)
     {
         _logger.LogWarning("task was not found: {}", id);
-        return NotFound(new {
+        return NotFound(new DTOs.ApiMessageDto {
             Message = $"Task with ID '{id}' was not found",
         });
     }

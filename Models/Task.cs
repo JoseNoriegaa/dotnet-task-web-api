@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace EntityFrameworkPracticeApp.Models;
 
 public class Task : BaseModel
@@ -9,6 +11,7 @@ public class Task : BaseModel
 
     public Guid CategoryId { get; set; }
 
+    [JsonIgnore]
     public virtual Category? Category { get; set; }
 
     public string? ShortDescription { get; set; }
