@@ -51,7 +51,7 @@ curl -X GET http://localhost:5272/api/categories
 ```
 
 ##### Response Example
-```
+```json
 [
   {
     "id": "string",
@@ -74,7 +74,7 @@ curl -X GET http://localhost:5272/api/categories/{id}
 ```
 
 ##### Response Example
-```
+```json
 {
   "id": "string",
   "createdAt": "string",
@@ -95,7 +95,7 @@ curl -X POST -H 'Content-Type:application/json' http://localhost:5272/api/catego
 ```
 
 ##### Response Example
-```
+```json
 {
   "id": "string",
   "createdAt": "string",
@@ -116,7 +116,7 @@ curl -X PUT -H 'Content-Type:application/json' http://localhost:5272/api/categor
 ```
 
 ##### Response Example
-```
+```json
 {
   "id": "string",
   "createdAt": "string",
@@ -137,7 +137,7 @@ curl -X DELETE http://localhost:5272/api/categories/{id}
 ```
 
 ##### Response Example
-```
+```json
 {
   "id": "string",
   "createdAt": "string",
@@ -158,7 +158,7 @@ curl -X GET http://localhost:5272/api/tasks/{id}
 ```
 
 ##### Response Example
-```
+```json
 {
   "id": "string",
   "createdAt": "string",
@@ -181,7 +181,7 @@ curl -X GET http://localhost:5272/api/tasks
 ```
 
 ##### Response Example
-```
+```json
 [
   {
     "id": "string",
@@ -206,7 +206,7 @@ curl -X POST -H 'Content-Type:application/json' http://localhost:5272/api/tasks 
 ```
 
 ##### Response Example
-```
+```json
 {
   "id": "string",
   "createdAt": "string",
@@ -229,7 +229,7 @@ curl -X PUT -H 'Content-Type:application/json' http://localhost:5272/api/tasks/{
 ```
 
 ##### Response Example
-```
+```json
 {
   "id": "string",
   "createdAt": "string",
@@ -252,7 +252,7 @@ curl -X DELETE http://localhost:5272/api/tasks/{id}
 ```
 
 ##### Response Example
-```
+```json
 {
   "id": "string",
   "createdAt": "string",
