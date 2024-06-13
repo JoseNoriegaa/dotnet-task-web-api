@@ -5,7 +5,7 @@ namespace EntityFrameworkPracticeApp.Controllers;
 
 [ApiController]
 [Route("api/tasks")]
-public class TaskController(ApplicationDBContext dbContext, ILogger<TaskController> logger) : ControllerBase
+public class TaskController(ApplicationDBContext dbContext, ILogger<TaskController> logger) : ControllerBase, ITaskController
 {
     // GET: api/tasks
     [HttpGet]
@@ -86,6 +86,7 @@ public class TaskController(ApplicationDBContext dbContext, ILogger<TaskControll
         item.Description = body.Description;
         item.CategoryId = body.CategoryId;
         item.Priority = body.Priority ?? Models.Priority.LOW;
+        item.UpdatedAt = DateTime.UtcNow;
 
         logger.LogInformation("updating task: {}", id);
         dbContext.SaveChanges();
@@ -137,4 +138,13 @@ public struct TaskDTO
     public required Guid CategoryId { get; set; }
 
     public Models.Priority? Priority { get; set; } = Models.Priority.LOW;
+}
+
+public interface ITaskController
+{
+    public IActionResult List();
+    public IActionResult Retrieve(Guid id);
+    public IActionResult Create(TaskDTO body);
+    public IActionResult Update(Guid id, TaskDTO body);
+    public IActionResult Delete(Guid id);
 }
