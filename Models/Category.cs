@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 
 namespace EntityFrameworkPracticeApp.Models;
 
-internal class Category : BaseModel
+public class Category : BaseModel
 {
     public string Name { get; set; } = "";
 

@@ -1,6 +1,6 @@
 namespace EntityFrameworkPracticeApp.Models;
 
-internal abstract class BaseModel
+public abstract class BaseModel
 {
     public Guid Id { get; set; }
 

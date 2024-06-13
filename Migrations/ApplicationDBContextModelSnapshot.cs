@@ -2,20 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace ef_practie.Migrations
+namespace EntityFrameworkPracticeApp.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20240612173230_AddWeightToCategory")]
-    partial class AddWeightToCategory
+    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -31,6 +28,10 @@ namespace ef_practie.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("text")
@@ -42,6 +43,10 @@ namespace ef_practie.Migrations
                         .HasColumnType("character varying(150)")
                         .HasColumnName("name");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
                     b.Property<int>("Weight")
                         .HasColumnType("integer")
                         .HasColumnName("weight");
@@ -49,6 +54,26 @@ namespace ef_practie.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("category", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("e9d2de54-d048-42fd-8715-251875766097"),
+                            CreatedAt = new DateTime(2024, 6, 13, 5, 29, 38, 120, DateTimeKind.Utc).AddTicks(710),
+                            Description = "",
+                            Name = "Actividades Pendientes",
+                            UpdatedAt = new DateTime(2024, 6, 13, 5, 29, 38, 120, DateTimeKind.Utc).AddTicks(710),
+                            Weight = 20
+                        },
+                        new
+                        {
+                            Id = new Guid("ea5fdb05-f70e-47e0-91ee-292f1baf5eae"),
+                            CreatedAt = new DateTime(2024, 6, 13, 5, 29, 38, 120, DateTimeKind.Utc).AddTicks(740),
+                            Description = "",
+                            Name = "Actividades Personales",
+                            UpdatedAt = new DateTime(2024, 6, 13, 5, 29, 38, 120, DateTimeKind.Utc).AddTicks(740),
+                            Weight = 50
+                        });
                 });
 
             modelBuilder.Entity("EntityFrameworkPracticeApp.Models.Task", b =>
@@ -67,7 +92,6 @@ namespace ef_practie.Migrations
                         .HasColumnName("created_at");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("description");
 
@@ -81,11 +105,35 @@ namespace ef_practie.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("priority");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
 
                     b.ToTable("task", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("3c3fd5ab-2202-4dea-82ea-1ef1dc7c9b20"),
+                            CategoryId = new Guid("e9d2de54-d048-42fd-8715-251875766097"),
+                            CreatedAt = new DateTime(2024, 6, 13, 5, 29, 38, 120, DateTimeKind.Utc).AddTicks(6550),
+                            Name = "Pago de servicios públicos",
+                            Priority = 1,
+                            UpdatedAt = new DateTime(2024, 6, 13, 5, 29, 38, 120, DateTimeKind.Utc).AddTicks(6550)
+                        },
+                        new
+                        {
+                            Id = new Guid("94cbd857-fd05-496a-b025-673815fdf7b8"),
+                            CategoryId = new Guid("ea5fdb05-f70e-47e0-91ee-292f1baf5eae"),
+                            CreatedAt = new DateTime(2024, 6, 13, 5, 29, 38, 120, DateTimeKind.Utc).AddTicks(6560),
+                            Name = "Terminar película en Netflix",
+                            Priority = 0,
+                            UpdatedAt = new DateTime(2024, 6, 13, 5, 29, 38, 120, DateTimeKind.Utc).AddTicks(6560)
+                        });
                 });
 
             modelBuilder.Entity("EntityFrameworkPracticeApp.Models.Task", b =>

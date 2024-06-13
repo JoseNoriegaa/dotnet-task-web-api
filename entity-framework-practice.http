@@ -1,0 +1,6 @@
+@entity_framework_practice_HostAddress = http://localhost:5272
+
+GET {{entity_framework_practice_HostAddress}}/category
+Accept: application/json
+
+###

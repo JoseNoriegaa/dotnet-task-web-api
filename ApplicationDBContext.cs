@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Models = EntityFrameworkPracticeApp.Models;
 
-internal class ApplicationDBContext : DbContext
+public class ApplicationDBContext : DbContext
 {
     public DbSet<Models.Category> Categories { get; set; }
     public DbSet<Models.Task> Tasks { get; set; }
@@ -78,7 +78,7 @@ internal class ApplicationDBContext : DbContext
             {
                 Id = Guid.Parse("3c3fd5ab-2202-4dea-82ea-1ef1dc7c9b20"),
                 Name = "Pago de servicios públicos",
-                Description = "",
+                Description = null,
                 CategoryId = categories[0].Id,
                 Priority = Models.Priority.MEDIUM,
                 CreatedAt = DateTime.UtcNow,
@@ -88,7 +88,7 @@ internal class ApplicationDBContext : DbContext
             {
                 Id = Guid.Parse("94cbd857-fd05-496a-b025-673815fdf7b8"),
                 Name = "Terminar película en Netflix",
-                Description = "",
+                Description = null,
                 CategoryId = categories[1].Id,
                 Priority = Models.Priority.LOW,
                 CreatedAt = DateTime.UtcNow,

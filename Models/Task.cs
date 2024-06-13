@@ -1,9 +1,9 @@
 namespace EntityFrameworkPracticeApp.Models;
 
-internal class Task : BaseModel
+public class Task : BaseModel
 {
     public string Name { get; set; } = "";
-    public string Description { get; set; } = "";
+    public string? Description { get; set; }
 
     public Priority Priority { get; set; }
 
@@ -11,7 +11,7 @@ internal class Task : BaseModel
 
     public virtual Category? Category { get; set; }
 
-    public string ShortDescription { get; set; } = "";
+    public string? ShortDescription { get; set; }
 }
 
 public enum Priority
