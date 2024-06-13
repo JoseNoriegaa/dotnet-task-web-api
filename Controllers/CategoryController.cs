@@ -74,7 +74,7 @@ public class CategoryController([FromServices] ApplicationDBContext dbContext, I
     }
 
     // DELETE: api/categories/:id
-    [HttpDelete]
+    [HttpDelete("{id:guid}")]
     public IActionResult Delete(Guid id)
     {
         var item = this.FetchCategoryById(id);
@@ -82,11 +82,21 @@ public class CategoryController([FromServices] ApplicationDBContext dbContext, I
             return this.CategoryNotFoundResponse(id);
         }
 
+        var count = dbContext.Tasks.Count(p => p.CategoryId == id);
+        if (count != 0)
+        {
+            var msg = "Cannot delete a category with associated tasks.";
+            logger.LogWarning(msg);
+            return Conflict(new {
+                Message = msg,
+            });
+        }
+
         logger.LogInformation("deleting category: {}", item.Id);
         dbContext.Remove(item);
         dbContext.SaveChanges();
 
-        return Ok(item);
+        return Ok(count);
     }
 
     private Models.Category? FetchCategoryById(Guid id)
