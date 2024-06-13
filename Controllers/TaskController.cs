@@ -19,15 +19,10 @@ public class TaskController(ApplicationDBContext dbContext, ILogger<TaskControll
     [HttpGet("{id:guid}")]
     public IActionResult Retrieve(Guid id)
     {
-        logger.LogInformation("fetching tasks with ID: {}", id);
-        var item = dbContext.Tasks.Find(id);
-
+        var item = this.FetchByID(id);
         if (item == null)
         {
-            logger.LogWarning("task was not found: {}", id);
-            return NotFound(new {
-                Message = $"Task with ID '{id}' was not found",
-            });
+            return this.TaskNotFoundResponse(id);
         }
 
         return Ok(item);
@@ -71,15 +66,10 @@ public class TaskController(ApplicationDBContext dbContext, ILogger<TaskControll
     [HttpPut("{id:guid}")]
     public IActionResult Update(Guid id, [FromBody] TaskDTO body)
     {
-        logger.LogInformation("fetching tasks with ID: {}", id);
-        var item = dbContext.Tasks.Find(id);
-
+        var item = this.FetchByID(id);
         if (item == null)
         {
-            logger.LogWarning("task was not found: {}", id);
-            return NotFound(new {
-                Message = $"Task with ID '{id}' was not found",
-            });
+            return this.TaskNotFoundResponse(id);
         }
 
         logger.LogInformation("validating category ID: {CategoryId}", body.CategoryId);
@@ -107,15 +97,10 @@ public class TaskController(ApplicationDBContext dbContext, ILogger<TaskControll
     [HttpDelete("{id:guid}")]
     public IActionResult Delete(Guid id)
     {
-        logger.LogInformation("fetching tasks with ID: {}", id);
-        var item = dbContext.Tasks.Find(id);
-
+        var item = this.FetchByID(id);
         if (item == null)
         {
-            logger.LogWarning("task was not found: {}", id);
-            return NotFound(new {
-                Message = $"Task with ID '{id}' was not found",
-            });
+            return this.TaskNotFoundResponse(id);
         }
 
         logger.LogInformation("removing task: {}", id);
@@ -123,6 +108,21 @@ public class TaskController(ApplicationDBContext dbContext, ILogger<TaskControll
         dbContext.SaveChanges();
 
         return Ok(item);
+    }
+
+    private Models.Task? FetchByID(Guid id) {
+        logger.LogInformation("fetching tasks with ID: {}", id);
+        var item = dbContext.Tasks.Find(id);
+
+        return item;
+    }
+
+    private NotFoundObjectResult TaskNotFoundResponse(Guid id)
+    {
+        logger.LogWarning("task was not found: {}", id);
+        return NotFound(new {
+            Message = $"Task with ID '{id}' was not found",
+        });
     }
 }
 
