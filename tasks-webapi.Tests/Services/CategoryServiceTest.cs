@@ -21,12 +21,10 @@ public class CategoryServiceTest
         mockSet.As<IQueryable<Category>>().Setup(m => m.Expression).Returns(data.Expression);
         mockSet.As<IQueryable<Category>>().Setup(m => m.ElementType).Returns(data.ElementType);
         mockSet.As<IQueryable<Category>>().Setup(m => m.GetEnumerator()).Returns(() => data.GetEnumerator());
-
         mockDBContext.Setup(c => c.Categories).Returns(mockSet.Object);
 
         // Act
         var service = new CategoryService(mockDBContext.Object, loggerMock.Object);
-
         var results = service.GetAllCategories().ToList();
 
         // Assert
@@ -42,12 +40,9 @@ public class CategoryServiceTest
         var mockDBContext = new Mock<ApplicationDBContext>();
         var data = GenerateData();
         var mockItem = data.First();
-
         mockDBContext.Setup(c => c.Categories.Find(It.IsAny<Guid>())).Returns(mockItem);
 
-        // Act
         var service = new CategoryService(mockDBContext.Object, loggerMock.Object);
-
         var result = service.GetCategoryById(mockItem.Id);
 
         Assert.NotNull(result);
@@ -59,16 +54,60 @@ public class CategoryServiceTest
     {
         var loggerMock = new Mock<ILogger<CategoryService>>();
         var mockDBContext = new Mock<ApplicationDBContext>();
-
         mockDBContext.Setup(static c => c.Categories.Find(It.IsAny<Guid>()));
-
-        // Act
-        var service = new CategoryService(mockDBContext.Object, loggerMock.Object);
-
         var id = Guid.NewGuid();
+
+        var service = new CategoryService(mockDBContext.Object, loggerMock.Object);
         var result = service.GetCategoryById(id);
 
         Assert.Null(result);
+    }
+
+    [Fact]
+    public void CreateCategory_should_create_and_return_a_category()
+    {
+        var loggerMock = new Mock<ILogger<CategoryService>>();
+        var mockDBContext = new Mock<ApplicationDBContext>();
+
+        DTOs.CategoryDTO itemDto = new() {
+            Name = "New Category",
+            Description = "Description",
+        };
+
+        var service = new CategoryService(mockDBContext.Object, loggerMock.Object);
+        var newItem = service.CreateCategory(itemDto);
+
+        Assert.NotNull(newItem);
+        Assert.Equal(itemDto.Name, newItem.Name);
+        Assert.Equal(itemDto.Description, newItem.Description);
+
+        mockDBContext.Verify(
+            c => c.Add(newItem),
+            Times.Once
+        );
+
+        mockDBContext.Verify(
+            static c => c.SaveChanges(),
+            Times.Once
+        );
+    }
+
+    [Fact]
+    public void CreateCategory_should_add_empty_string_to_description_when_not_provided()
+    {
+        var loggerMock = new Mock<ILogger<CategoryService>>();
+        var mockDBContext = new Mock<ApplicationDBContext>();
+
+        DTOs.CategoryDTO itemDto = new() {
+            Name = "New Category",
+        };
+
+        var service = new CategoryService(mockDBContext.Object, loggerMock.Object);
+        var newItem = service.CreateCategory(itemDto);
+
+        Assert.NotNull(newItem);
+        Assert.Equal(itemDto.Name, newItem.Name);
+        Assert.Equal("", newItem.Description);
     }
 
     private static IQueryable<Category> GenerateData()
