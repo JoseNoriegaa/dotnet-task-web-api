@@ -164,4 +164,28 @@ public class CategoryServiceTest
 
         Assert.Equal(2, result);
     }
+
+    [Theory]
+    [InlineData("3c3fd5ab-2202-4dea-82ea-1ef1dc7c9b20", true)]
+    [InlineData("3c3fd5ab-2202-4dea-82ea-1ef1dc7c9b21", false)]
+    public void Exists(Guid id, bool expected)
+    {
+        var loggerMock = new Mock<ILogger<CategoryService>>();
+        var mockDBContext = new Mock<ApplicationDBContext>();
+        var data = CategoryDataMocks.Generate(1).ToList();
+        data[0].Id = Guid.Parse("3c3fd5ab-2202-4dea-82ea-1ef1dc7c9b20");
+        var query = data.AsQueryable();
+        
+        var mockSet = new Mock<DbSet<Category>>();
+        mockSet.As<IQueryable<Category>>().Setup(m => m.Provider).Returns(query.Provider);
+        mockSet.As<IQueryable<Category>>().Setup(m => m.Expression).Returns(query.Expression);
+        mockSet.As<IQueryable<Category>>().Setup(m => m.ElementType).Returns(query.ElementType);
+        mockSet.As<IQueryable<Category>>().Setup(m => m.GetEnumerator()).Returns(() => query.GetEnumerator());
+        mockDBContext.Setup(c => c.Categories).Returns(mockSet.Object);
+
+        var service = new CategoryService(mockDBContext.Object, loggerMock.Object);
+        var result = service.Exists(id);
+
+        Assert.Equal(result, expected);
+    }
 }
