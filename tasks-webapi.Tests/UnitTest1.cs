@@ -1,4 +1,4 @@
-namespace tasks_webapi.Tests;
+namespace TasksWebApi.Tests;
 
 public class UnitTest1
 {

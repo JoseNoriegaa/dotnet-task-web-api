@@ -5,10 +5,12 @@ namespace TasksWebApi;
 
 public class ApplicationDBContext : DbContext
 {
-    public DbSet<Models.Category> Categories { get; set; }
-    public DbSet<Models.Task> Tasks { get; set; }
+    public virtual DbSet<Models.Category> Categories { get; set; }
+    public virtual DbSet<Models.Task> Tasks { get; set; }
 
-    public ApplicationDBContext(DbContextOptions<ApplicationDBContext> options) : base(options) { }
+    public ApplicationDBContext() : base() {}
+
+    public ApplicationDBContext(DbContextOptions<ApplicationDBContext> options) : base(options) {}
 
     private static void ApplyCommonProperties<TEntity>(EntityTypeBuilder<TEntity> model) where TEntity : Models.BaseModel
     {
