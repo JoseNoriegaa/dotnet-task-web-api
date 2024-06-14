@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
+namespace TasksWebApi;
+
 public class ApplicationDBContext : DbContext
 {
     public DbSet<Models.Category> Categories { get; set; }
