@@ -80,16 +80,8 @@ public class CategoryServiceTest
         Assert.NotNull(newItem);
         Assert.Equal(itemDto.Name, newItem.Name);
         Assert.Equal(itemDto.Description, newItem.Description);
-
-        mockDBContext.Verify(
-            c => c.Add(newItem),
-            Times.Once
-        );
-
-        mockDBContext.Verify(
-            static c => c.SaveChanges(),
-            Times.Once
-        );
+        mockDBContext.Verify(c => c.Add(newItem), Times.Once);
+        mockDBContext.Verify(static c => c.SaveChanges(), Times.Once);
     }
 
     [Fact]
@@ -135,14 +127,26 @@ public class CategoryServiceTest
         Assert.Equal(category.Name, data.Name);
         Assert.Equal(category.Description, data.Description);
         Assert.NotEqual(category.CreatedAt, category.UpdatedAt);
-        mockDBContext.Verify(
-            static c => c.SaveChanges(),
-            Times.Once
-        );
+        mockDBContext.Verify(static c => c.SaveChanges(), Times.Once);
+    }
+
+    [Fact]
+    public void DeleteCategory_should_delete_the_provided_category()
+    {
+        var loggerMock = new Mock<ILogger<CategoryService>>();
+        var mockDBContext = new Mock<ApplicationDBContext>();
+        var item = GenerateData().First();
+
+        var service = new CategoryService(mockDBContext.Object, loggerMock.Object);
+        service.DeleteCategory(item);
+
+        mockDBContext.Verify(c => c.Remove(item), Times.Once);
+        mockDBContext.Verify(c => c.SaveChanges(), Times.Once);
     }
 
     private static IQueryable<Category> GenerateData()
     {
+        var timestamp = DateTime.UtcNow;
         return new List<Category>()
         {
             new() {
@@ -150,16 +154,16 @@ public class CategoryServiceTest
                 Name = "Category 1",
                 Description = "Category 1",
                 Weight = 50,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow,
+                CreatedAt = timestamp,
+                UpdatedAt = timestamp,
             },
             new() {
                 Id = Guid.Parse("e9d2de54-d048-42fd-8715-251875766097"),
                 Name = "Category 2",
                 Description = "Category 2",
                 Weight = 50,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow,
+                CreatedAt = timestamp,
+                UpdatedAt = timestamp,
             },
         }.AsQueryable();
     }
