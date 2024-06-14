@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using TasksWebApi.Models;
 using TasksWebApi.Services;
+using TasksWebApi.Tests.DataMocks;
 
 namespace TasksWebApi.Tests.Services;
 
@@ -14,7 +15,7 @@ public class CategoryServiceTest
         // Arrange
         var loggerMock = new Mock<ILogger<CategoryService>>();
         var mockDBContext = new Mock<ApplicationDBContext>();
-        var data = GenerateData();
+        var data = CategoryDataMocks.GenerateQueryable(2);
 
         var mockSet = new Mock<DbSet<Category>>();
         mockSet.As<IQueryable<Category>>().Setup(m => m.Provider).Returns(data.Provider);
@@ -38,7 +39,7 @@ public class CategoryServiceTest
     {
         var loggerMock = new Mock<ILogger<CategoryService>>();
         var mockDBContext = new Mock<ApplicationDBContext>();
-        var data = GenerateData();
+        var data = CategoryDataMocks.Generate(2);
         var mockItem = data.First();
         mockDBContext.Setup(c => c.Categories.Find(It.IsAny<Guid>())).Returns(mockItem);
 
@@ -135,7 +136,7 @@ public class CategoryServiceTest
     {
         var loggerMock = new Mock<ILogger<CategoryService>>();
         var mockDBContext = new Mock<ApplicationDBContext>();
-        var item = GenerateData().First();
+        var item = CategoryDataMocks.Generate().First();
 
         var service = new CategoryService(mockDBContext.Object, loggerMock.Object);
         service.DeleteCategory(item);
@@ -144,27 +145,23 @@ public class CategoryServiceTest
         mockDBContext.Verify(c => c.SaveChanges(), Times.Once);
     }
 
-    private static IQueryable<Category> GenerateData()
+    [Fact]
+    public void CountRelatedTasks_given_a_category_id_should_return_the_list_of_associated_tasks()
     {
-        var timestamp = DateTime.UtcNow;
-        return new List<Category>()
-        {
-            new() {
-                Id = Guid.Parse("e9d2de54-d048-42fd-8715-251875766097"),
-                Name = "Category 1",
-                Description = "Category 1",
-                Weight = 50,
-                CreatedAt = timestamp,
-                UpdatedAt = timestamp,
-            },
-            new() {
-                Id = Guid.Parse("e9d2de54-d048-42fd-8715-251875766097"),
-                Name = "Category 2",
-                Description = "Category 2",
-                Weight = 50,
-                CreatedAt = timestamp,
-                UpdatedAt = timestamp,
-            },
-        }.AsQueryable();
+        var loggerMock = new Mock<ILogger<CategoryService>>();
+        var mockDBContext = new Mock<ApplicationDBContext>();
+        var mockTasks = TaskDataMocks.GenerateQueryable(2);
+        var categoryId = mockTasks.First().CategoryId;
+        var mockSet = new Mock<DbSet<Models.Task>>();
+        mockSet.As<IQueryable<Models.Task>>().Setup(m => m.Provider).Returns(mockTasks.Provider);
+        mockSet.As<IQueryable<Models.Task>>().Setup(m => m.Expression).Returns(mockTasks.Expression);
+        mockSet.As<IQueryable<Models.Task>>().Setup(m => m.ElementType).Returns(mockTasks.ElementType);
+        mockSet.As<IQueryable<Models.Task>>().Setup(m => m.GetEnumerator()).Returns(() => mockTasks.GetEnumerator());
+        mockDBContext.Setup(c => c.Tasks).Returns(mockSet.Object);
+
+        var service = new CategoryService(mockDBContext.Object, loggerMock.Object);
+        var result = service.CountRelatedTasks(categoryId);
+
+        Assert.Equal(2, result);
     }
 }
