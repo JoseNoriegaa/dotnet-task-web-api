@@ -110,6 +110,37 @@ public class CategoryServiceTest
         Assert.Equal("", newItem.Description);
     }
 
+    [Fact]
+    public void UpdateCategory_should_update_a_category_with_the_provided_data()
+    {
+        var loggerMock = new Mock<ILogger<CategoryService>>();
+        var mockDBContext = new Mock<ApplicationDBContext>();
+        var timestamp = DateTime.UtcNow;
+        Category category = new() {
+            Id = Guid.Parse("e9d2de54-d048-42fd-8715-251875766097"),
+            Name = "Category 1",
+            Description = "Category 1",
+            Weight = 50,
+            CreatedAt = timestamp,
+            UpdatedAt = timestamp,
+        };
+        DTOs.CategoryDTO data = new () {
+            Name = "Walk the dog",
+            Description = "Take the dog for a walk"
+        };
+
+        var service = new CategoryService(mockDBContext.Object, loggerMock.Object);
+        service.UpdateCategory(category, data);
+
+        Assert.Equal(category.Name, data.Name);
+        Assert.Equal(category.Description, data.Description);
+        Assert.NotEqual(category.CreatedAt, category.UpdatedAt);
+        mockDBContext.Verify(
+            static c => c.SaveChanges(),
+            Times.Once
+        );
+    }
+
     private static IQueryable<Category> GenerateData()
     {
         return new List<Category>()
