@@ -95,4 +95,57 @@ public class TaskServiceTest
 
         Assert.Equal(Models.Priority.LOW, item.Priority);
     }
+
+    [Fact]
+    public void UpdateTask_should_update_task_with_the_provided_data()
+    {
+        var mockContext = new Mock<ApplicationDBContext>();
+        var task = TaskDataMocks.Generate(1).First();
+        var data = new DTOs.TaskDTO() {
+            Name = "Updated",
+            Description = "Updated",
+            CategoryId = Guid.NewGuid(),
+            Priority = Models.Priority.LOW,
+        };
+
+        var service = new TaskService(mockContext.Object, logger.Object);
+        service.UpdateTask(task, data);
+
+        Assert.Equal(task.Name, data.Name);
+        Assert.Equal(task.Description, data.Description);
+        Assert.Equal(task.Priority, data.Priority);
+        mockContext.Verify(c => c.SaveChanges(), Times.Once);
+    }
+
+    [Fact]
+    public void UpdateTask_should_add_priority_low_if_not_provided()
+    {
+        var mockContext = new Mock<ApplicationDBContext>();
+        var task = TaskDataMocks.Generate(1).First();
+        var data = new DTOs.TaskDTO() {
+            Name = "Updated",
+            Description = "Updated",
+            CategoryId = Guid.NewGuid(),
+            Priority = null,
+        };
+
+        var service = new TaskService(mockContext.Object, logger.Object);
+        service.UpdateTask(task, data);
+
+        Assert.Equal(Models.Priority.LOW, task.Priority);
+        mockContext.Verify(c => c.SaveChanges(), Times.Once);
+    }
+
+    [Fact]
+    public void DeleteTask()
+    {
+        var mockContext = new Mock<ApplicationDBContext>();
+        var task = TaskDataMocks.Generate(1).First();
+
+        var service = new TaskService(mockContext.Object, logger.Object);
+        service.DeleteTask(task);
+
+        mockContext.Verify(c => c.Remove(task), Times.Once);
+        mockContext.Verify(c => c.SaveChanges(), Times.Once);
+    }
 }
