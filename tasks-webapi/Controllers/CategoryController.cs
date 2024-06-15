@@ -7,7 +7,7 @@ namespace TasksWebApi.Controllers;
 [ApiController]
 [Produces("application/json")]
 [Consumes("application/json")]
-public class CategoryController(ILogger<CategoryController> _logger, Services.ICategoryService _categoryService) : ControllerBase, ICategoryController
+public class CategoryController(ILogger<ICategoryController> _logger, Services.ICategoryService _categoryService) : ControllerBase, ICategoryController
 {
     // GET: api/categories
     [HttpGet]
