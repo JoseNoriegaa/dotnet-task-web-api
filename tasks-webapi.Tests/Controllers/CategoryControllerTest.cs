@@ -1,12 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
 using TasksWebApi.Controllers;
 using TasksWebApi.Models;
 using TasksWebApi.Services;
 using TasksWebApi.Tests.DataMocks;
-using TasksWebApi.Tests.Helpers;
 
 namespace TasksWebApi.Tests.Controllers;
 
@@ -15,7 +13,7 @@ public class CategoryControllerTest
     private readonly Mock<ILogger<ICategoryController>> logger = new();
 
     [Fact]
-    public void List_should_return_the_list_of_tasks()
+    public void List_should_return_the_list_of_categories()
     {
         var data = CategoryDataMocks.Generate(2);
         var categoryService = new Mock<ICategoryService>();

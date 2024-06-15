@@ -8,7 +8,7 @@ namespace TasksWebApi.Controllers;
 [Produces("application/json")]
 [Consumes("application/json")]
 public class TaskController(
-    ILogger<TaskController> _logger,
+    ILogger<ITaskController> _logger,
     Services.ITaskService _taskService,
     Services.ICategoryService _categoryService) : ControllerBase, ITaskController
 {
