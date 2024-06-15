@@ -126,4 +126,57 @@ public class CategoryControllerTest
         var returnValue = Assert.IsAssignableFrom<DTOs.ApiMessageDto>(okResult.Value);
         Assert.Equal($"Category with ID '{id}' was not found", returnValue.Message);
     }
+
+    [Fact]
+    public void Delete_should_delete_and_return_a_category()
+    {
+        var item = CategoryDataMocks.Generate(1).First();
+        var categoryService = new Mock<ICategoryService>();
+        categoryService.Setup(c => c.GetCategoryById(item.Id)).Returns(item);
+        categoryService.Setup(c => c.DeleteCategory(item));
+
+        var controller = new CategoryController(logger.Object, categoryService.Object);
+        var result = controller.Delete(item.Id);
+
+        categoryService.Verify(c => c.DeleteCategory(item), Times.Once);
+        Assert.NotNull(result);
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        var returnValue = Assert.IsAssignableFrom<Category>(okResult.Value);
+        Assert.StrictEqual(returnValue, item);
+    }
+
+    [Fact]
+    public void Delete_should_return_not_found()
+    {
+        var id = Guid.NewGuid();
+        var categoryService = new Mock<ICategoryService>();
+        categoryService.Setup(c => c.GetCategoryById(id));
+
+        var controller = new CategoryController(logger.Object, categoryService.Object);
+        var result = controller.Delete(id);
+
+        categoryService.Verify(c => c.DeleteCategory(It.IsAny<Category>()), Times.Never);
+        Assert.NotNull(result);
+        var okResult = Assert.IsType<NotFoundObjectResult>(result);
+        var returnValue = Assert.IsAssignableFrom<DTOs.ApiMessageDto>(okResult.Value);
+        Assert.Equal($"Category with ID '{id}' was not found", returnValue.Message);
+    }
+
+    [Fact]
+    public void Delete_should_return_conflict_if_there_are_task_associated_with_the_category()
+    {
+        var item = CategoryDataMocks.Generate(1).First();
+        var categoryService = new Mock<ICategoryService>();
+        categoryService.Setup(c => c.GetCategoryById(item.Id)).Returns(item);
+        categoryService.Setup(c => c.CountRelatedTasks(item.Id)).Returns(2);
+
+        var controller = new CategoryController(logger.Object, categoryService.Object);
+        var result = controller.Delete(item.Id);
+
+        categoryService.Verify(c => c.DeleteCategory(It.IsAny<Category>()), Times.Never);
+        Assert.NotNull(result);
+        var okResult = Assert.IsType<ConflictObjectResult>(result);
+        var returnValue = Assert.IsAssignableFrom<DTOs.ApiMessageDto>(okResult.Value);
+        Assert.Equal("Cannot delete a category with associated tasks", returnValue.Message);
+    }
 }

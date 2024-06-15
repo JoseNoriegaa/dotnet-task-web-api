@@ -73,9 +73,9 @@ public class CategoryController(ILogger<ICategoryController> _logger, Services.I
         var count = _categoryService.CountRelatedTasks(id);
         if (count != 0)
         {
-            var msg = "Cannot delete a category with associated tasks.";
+            var msg = "Cannot delete a category with associated tasks";
             _logger.LogWarning(msg);
-            return Conflict(new {
+            return Conflict(new DTOs.ApiMessageDto {
                 Message = msg,
             });
         }
