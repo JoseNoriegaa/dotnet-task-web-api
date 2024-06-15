@@ -24,6 +24,7 @@ public class CategoryControllerTest
         var controller = new CategoryController(logger.Object, categoryService.Object);
         var result = controller.List();
 
+        categoryService.Verify(c => c.GetAllCategories(), Times.Once);
         Assert.NotNull(result);
         var okResult = Assert.IsType<OkObjectResult>(result);
         var returnValue = Assert.IsAssignableFrom<IEnumerable<Category>>(okResult.Value);
@@ -43,6 +44,7 @@ public class CategoryControllerTest
         var controller = new CategoryController(logger.Object, categoryService.Object);
         var result = controller.Retrieve(item.Id);
 
+        categoryService.Verify(c => c.GetCategoryById(item.Id), Times.Once);
         Assert.NotNull(result);
         var okResult = Assert.IsType<OkObjectResult>(result);
         var returnValue = Assert.IsAssignableFrom<Category>(okResult.Value);
@@ -63,6 +65,7 @@ public class CategoryControllerTest
         var okResult = Assert.IsType<NotFoundObjectResult>(result);
         var returnValue = Assert.IsAssignableFrom<DTOs.ApiMessageDto>(okResult.Value);
         Assert.Equal($"Category with ID '{id}' was not found", returnValue.Message);
+        categoryService.Verify(c => c.GetCategoryById(id), Times.Once);
     }
 
     [Fact]
@@ -80,9 +83,47 @@ public class CategoryControllerTest
         var controller = new CategoryController(logger.Object, categoryService.Object);
         var result = controller.Create(data);
 
+        categoryService.Verify(c => c.CreateCategory(data), Times.Once);
         Assert.NotNull(result);
         var okResult = Assert.IsType<OkObjectResult>(result);
         var returnValue = Assert.IsAssignableFrom<Category>(okResult.Value);
         Assert.StrictEqual(returnValue, item);
+    }
+
+    [Fact]
+    public void Update_should_update_and_return_the_updated_category()
+    {
+        var data = new DTOs.CategoryDTO() { Name = "Updated" };
+        var item = CategoryDataMocks.Generate(1).First();
+        var categoryService = new Mock<ICategoryService>();
+        categoryService.Setup(c => c.GetCategoryById(item.Id)).Returns(item);
+        categoryService.Setup(c => c.UpdateCategory(item, data));
+
+        var controller = new CategoryController(logger.Object, categoryService.Object);
+        var result = controller.Update(item.Id, data);
+
+        categoryService.Verify(c => c.UpdateCategory(item, data), Times.Once);
+        Assert.NotNull(result);
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        var returnValue = Assert.IsAssignableFrom<Category>(okResult.Value);
+        Assert.StrictEqual(returnValue, item);
+    }
+
+    [Fact]
+    public void Update_should_not_found()
+    {
+        var id = Guid.NewGuid();
+        var data = new DTOs.CategoryDTO() { Name = "Updated" };
+        var categoryService = new Mock<ICategoryService>();
+        categoryService.Setup(c => c.GetCategoryById(id));
+
+        var controller = new CategoryController(logger.Object, categoryService.Object);
+        var result = controller.Update(id, data);
+
+        categoryService.Verify(c => c.UpdateCategory(It.IsAny<Category>(), It.IsAny<DTOs.CategoryDTO>()), Times.Never);
+        Assert.NotNull(result);
+        var okResult = Assert.IsType<NotFoundObjectResult>(result);
+        var returnValue = Assert.IsAssignableFrom<DTOs.ApiMessageDto>(okResult.Value);
+        Assert.Equal($"Category with ID '{id}' was not found", returnValue.Message);
     }
 }
