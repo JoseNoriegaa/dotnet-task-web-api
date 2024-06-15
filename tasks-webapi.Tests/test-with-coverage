@@ -1,0 +1,6 @@
+#/bin/bash
+REPORT_GENERATOR_BASE_DIR=/Users/$USER/.nuget/packages/reportgenerator
+REPORT_GENERATOR_DLL="$REPORT_GENERATOR_BASE_DIR/$(ls $REPORT_GENERATOR_BASE_DIR | head -n 1)/tools/net$(dotnet --version | grep -oE '[0-9]\.[0-9]')/ReportGenerator.dll"
+dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura $@
+
+dotnet $REPORT_GENERATOR_DLL -reports:coverage.cobertura.xml -targetdir:coverage-report
