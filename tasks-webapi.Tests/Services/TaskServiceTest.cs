@@ -57,4 +57,42 @@ public class TaskServiceTest
 
         Assert.Null(result);
     }
+
+    [Fact]
+    public void CreateTask_should_create_and_return_a_task()
+    {
+        var mockContext = new Mock<ApplicationDBContext>();
+        DTOs.TaskDTO data = new() {
+            Name = "New task",
+            Description = "Task description",
+            CategoryId = Guid.NewGuid(),
+            Priority = Models.Priority.HIGH,
+        };
+
+        var service = new TaskService(mockContext.Object, logger.Object);
+        var item = service.CreateTask(data);
+
+        Assert.Equal(item.Name, data.Name);
+        Assert.Equal(item.Description, data.Description);
+        Assert.Equal(item.Priority, data.Priority);
+        mockContext.Verify(c => c.Add(item), Times.Once);
+        mockContext.Verify(c => c.SaveChanges(), Times.Once);
+    }
+
+    [Fact]
+    public void CreateTask_should_add_priority_low_if_not_specified()
+    {
+        var mockContext = new Mock<ApplicationDBContext>();
+        DTOs.TaskDTO data = new() {
+            Name = "New task",
+            Description = null,
+            CategoryId = Guid.NewGuid(),
+            Priority = null,
+        };
+
+        var service = new TaskService(mockContext.Object, logger.Object);
+        var item = service.CreateTask(data);
+
+        Assert.Equal(Models.Priority.LOW, item.Priority);
+    }
 }
