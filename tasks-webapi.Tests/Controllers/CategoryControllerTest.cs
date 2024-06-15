@@ -64,4 +64,25 @@ public class CategoryControllerTest
         var returnValue = Assert.IsAssignableFrom<DTOs.ApiMessageDto>(okResult.Value);
         Assert.Equal($"Category with ID '{id}' was not found", returnValue.Message);
     }
+
+    [Fact]
+    public void Create_should_create_an_return_a_category()
+    {
+        var data = new DTOs.CategoryDTO()
+        {
+            Name = "New category"
+        };
+        var item = CategoryDataMocks.Generate(1).First();
+        item.Name = data.Name;
+        var categoryService = new Mock<ICategoryService>();
+        categoryService.Setup(c => c.CreateCategory(data)).Returns(item);
+
+        var controller = new CategoryController(logger.Object, categoryService.Object);
+        var result = controller.Create(data);
+
+        Assert.NotNull(result);
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        var returnValue = Assert.IsAssignableFrom<Category>(okResult.Value);
+        Assert.StrictEqual(returnValue, item);
+    }
 }
