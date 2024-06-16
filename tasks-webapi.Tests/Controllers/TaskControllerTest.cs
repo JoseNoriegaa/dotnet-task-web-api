@@ -186,4 +186,38 @@ public class TaskControllerTest
         Assert.NotNull(result);
         Assert.IsType<BadRequestObjectResult>(result);
     }
+   
+    [Fact]
+    public void Delete_should_delete_task()
+    {
+        var item = TaskDataMocks.Generate(1).First();
+        var taskService = new Mock<ITaskService>();
+        taskService.Setup(c => c.GetTaskById(item.Id)).Returns(item);
+
+        var controller = new TaskController(logger.Object, taskService.Object, categoryService.Object);
+        var result = controller.Delete(item.Id);
+
+        taskService.Verify(c => c.DeleteTask(item), Times.Once);
+        Assert.NotNull(result);
+        var response = Assert.IsType<OkObjectResult>(result);
+        var returnValue = Assert.IsAssignableFrom<Models.Task>(response.Value);
+        Assert.Equal(item.Id, returnValue.Id);
+    }
+
+    [Fact]
+    public void Delete_should_return_not_found()
+    {
+        var item = TaskDataMocks.Generate(1).First();
+        var taskService = new Mock<ITaskService>();
+        taskService.Setup(c => c.GetTaskById(item.Id));
+
+        var controller = new TaskController(logger.Object, taskService.Object, categoryService.Object);
+        var result = controller.Delete(item.Id);
+
+        taskService.Verify(c => c.DeleteTask(item), Times.Never);
+        Assert.NotNull(result);
+        var response = Assert.IsType<NotFoundObjectResult>(result);
+        var returnValue = Assert.IsAssignableFrom<DTOs.ApiMessageDto>(response.Value);
+        Assert.Equal($"Task with ID '{item.Id}' was not found", returnValue.Message);
+    }
 }
