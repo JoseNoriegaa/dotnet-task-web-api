@@ -69,7 +69,7 @@ public class TaskControllerTest
     }
 
     [Fact]
-    public void CreateTask_should_create_and_return_a_task()
+    public void Create_should_create_and_return_a_task()
     {
         var item = TaskDataMocks.Generate(1).First();
         var taskService = new Mock<ITaskService>();
@@ -96,7 +96,7 @@ public class TaskControllerTest
     }
 
     [Fact]
-    public void CreateTask_should_return_400_response_if_category_not_exists()
+    public void Create_should_return_400_response_if_category_not_exists()
     {
         var item = TaskDataMocks.Generate(1).First();
         var taskService = new Mock<ITaskService>();
@@ -112,6 +112,77 @@ public class TaskControllerTest
         var result = controller.Create(data);
 
         taskService.Verify(c => c.CreateTask(It.IsAny<DTOs.TaskDTO>()), Times.Never);
+        Assert.NotNull(result);
+        Assert.IsType<BadRequestObjectResult>(result);
+    }
+
+    [Fact]
+    public void Update_should_update_and_return_a_task()
+    {
+        var item = TaskDataMocks.Generate(1).First();
+        var taskService = new Mock<ITaskService>();
+        var data = new DTOs.TaskDTO {
+            Name = item.Name,
+            Description = item.Description,
+            CategoryId = item.CategoryId,
+            Priority = item.Priority,
+        };
+        categoryService.Setup(c => c.Exists(It.IsAny<Guid>())).Returns(true);
+        taskService.Setup(c => c.GetTaskById(item.Id)).Returns(item);
+        taskService.Setup(c => c.UpdateTask(item, data));
+
+        var controller = new TaskController(logger.Object, taskService.Object, categoryService.Object);
+        var result = controller.Update(item.Id, data);
+
+        taskService.Verify(c => c.UpdateTask(item, data), Times.Once);
+        Assert.NotNull(result);
+        var response = Assert.IsType<OkObjectResult>(result);
+        var returnValue = Assert.IsAssignableFrom<Models.Task>(response.Value);
+        Assert.Equal(item.Id, returnValue.Id);
+    }
+
+    [Fact]
+    public void Update_should_return_not_found()
+    {
+        var item = TaskDataMocks.Generate(1).First();
+        var taskService = new Mock<ITaskService>();
+        var data = new DTOs.TaskDTO {
+            Name = item.Name,
+            Description = item.Description,
+            CategoryId = item.CategoryId,
+            Priority = item.Priority,
+        };
+        categoryService.Setup(c => c.Exists(It.IsAny<Guid>())).Returns(true);
+        taskService.Setup(c => c.GetTaskById(item.Id));
+
+        var controller = new TaskController(logger.Object, taskService.Object, categoryService.Object);
+        var result = controller.Update(item.Id, data);
+
+        taskService.Verify(c => c.UpdateTask(It.IsAny<Models.Task>(), It.IsAny<DTOs.TaskDTO>()), Times.Never);
+        Assert.NotNull(result);
+        var response = Assert.IsType<NotFoundObjectResult>(result);
+        var returnValue = Assert.IsAssignableFrom<DTOs.ApiMessageDto>(response.Value);
+        Assert.Equal($"Task with ID '{item.Id}' was not found", returnValue.Message);
+    }
+   
+    [Fact]
+    public void Update_should_bad_request()
+    {
+        var item = TaskDataMocks.Generate(1).First();
+        var taskService = new Mock<ITaskService>();
+        var data = new DTOs.TaskDTO {
+            Name = item.Name,
+            Description = item.Description,
+            CategoryId = item.CategoryId,
+            Priority = item.Priority,
+        };
+        categoryService.Setup(c => c.Exists(It.IsAny<Guid>())).Returns(false);
+        taskService.Setup(c => c.GetTaskById(item.Id)).Returns(item);
+
+        var controller = new TaskController(logger.Object, taskService.Object, categoryService.Object);
+        var result = controller.Update(item.Id, data);
+
+        taskService.Verify(c => c.UpdateTask(It.IsAny<Models.Task>(), It.IsAny<DTOs.TaskDTO>()), Times.Never);
         Assert.NotNull(result);
         Assert.IsType<BadRequestObjectResult>(result);
     }
